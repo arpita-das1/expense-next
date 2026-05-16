@@ -34,3 +34,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# uploaded receipts (keep folder)
+/public/receipts/*
+!/public/receipts/.gitkeep
+# next-agents-md
+.next-docs/
