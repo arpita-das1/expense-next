@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Expense Tracker (expense-next)
 
-## Getting Started
+A lightweight Next.js expense tracker application with receipt upload, AWS Textract receipt scanning, and Prisma-backed storage.
 
-First, run the development server:
+## What this project does
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Adds and stores expense records with title, amount, category, notes, and date.
+- Uploads receipt images and stores them in `public/receipts`.
+- Uses an API route to send receipt image data to AWS Textract for automatic merchant, amount, and date extraction.
+- Displays expense data on dashboard and insights pages.
+
+## Key features
+
+- Next.js App Router project structure
+- Server Actions for form submission
+- Prisma ORM with SQLite database
+- AWS Textract integration for receipt scanning
+- File upload validation and receipt storage
+- Static public file hosting for uploaded receipts
+
+## Technologies used
+
+- `next` 14
+- `react` 18
+- `prisma` 6
+- `@prisma/client`
+- `@aws-sdk/client-textract`
+- `typescript`
+- `tailwindcss`
+
+## Project structure
+
+- `app/`
+  - `page.tsx` — landing or summary page
+  - `dashboard/page.tsx` — expense dashboard view
+  - `insights/page.tsx` — aggregated expense insights
+  - `upload-receipt/page.tsx` — receipt upload and auto-fill form
+  - `api/upload-receipt/route.ts` — receipt scan API route
+  - `actions/expenses.ts` — server actions for expense creation and receipt upload
+- `components/`
+  - `AddExpenseForm.tsx` — add expense form component
+  - `UploadReceiptForm.tsx` — receipt upload and scan component
+  - `AppNav.tsx` — navigation menu
+- `lib/`
+  - `prisma.ts` — Prisma client initialization
+  - `receipt-extraction.ts` — local receipt image validation and AWS Textract helper
+  - `textract-receipt.ts` — AWS Textract response mapping
+  - `receipt-types.ts` — receipt extraction result types
+- `prisma/schema.prisma` — database schema configuration
+- `public/receipts/` — uploaded receipt storage directory
+
+## Environment variables
+
+Create a `.env` file with the following values for local development:
+
+```env
+DATABASE_URL="file:./dev.db"
+AWS_REGION=us-east-1
+AWS_ACCESS_KEY_ID=your-access-key-id
+AWS_SECRET_ACCESS_KEY=your-secret-access-key
+# AWS_SESSION_TOKEN=optional
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+> Do not commit `.env` to git. This repository already ignores `.env`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Running locally
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Install dependencies and start the dev server:
 
-## Learn More
+```bash
+npm install
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Open [http://localhost:3000](http://localhost:3000).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Database
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+This app uses SQLite for local development. Prisma generates the client automatically during install.
 
-## Deploy on Vercel
+- Run `npx prisma migrate dev --name init` to create or update the database schema.
+- Run `npx prisma studio` to inspect stored expense records.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Notes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Uploaded receipts are stored in `public/receipts` and served as static files.
+- The receipt scan route uses AWS Textract and requires valid AWS credentials.
+- There is no authentication built into this sample project.
+
+## Deployment
+
+This app can be deployed to Vercel or any Node.js-compatible hosting provider.
+
+For Vercel, simply connect the repository and configure environment variables in the project settings.
