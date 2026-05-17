@@ -7,8 +7,8 @@ export default function UploadReceiptPage() {
         Upload receipt
       </h1>
       <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
-        Files are stored under <code className="rounded bg-neutral-100 px-1 dark:bg-neutral-900">public/receipts</code> and
-        the path is saved on the expense row.
+        Choose an image to scan with AWS Textract and auto-fill the form, then save. Files are stored under{" "}
+        <code className="rounded bg-neutral-100 px-1 dark:bg-neutral-900">public/receipts</code>.
       </p>
       <div className="mt-8">
         <UploadReceiptForm />

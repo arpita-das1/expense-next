@@ -61,6 +61,9 @@ export async function uploadReceiptWithExpense(
   const buffer = Buffer.from(await file.arrayBuffer());
   await writeFile(path.join(receiptsDir, filename), buffer);
 
+  const occurredAtRaw = String(formData.get("occurredAt") ?? "").trim();
+  const occurredAt = occurredAtRaw ? new Date(occurredAtRaw) : undefined;
+
   const receiptPath = `/receipts/${filename}`;
   await prisma.expense.create({
     data: {
@@ -69,6 +72,7 @@ export async function uploadReceiptWithExpense(
       receiptPath,
       category: String(formData.get("category") ?? "").trim() || null,
       notes: String(formData.get("notes") ?? "").trim() || null,
+      ...(occurredAt && !Number.isNaN(occurredAt.getTime()) ? { occurredAt } : {}),
     },
   });
 
