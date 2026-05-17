@@ -1,10 +1,7 @@
 import { prisma } from "@/lib/prisma";
+import { buildTopCategories, formatMoney } from "../../lib/insights";
 
 export const dynamic = "force-dynamic";
-
-function formatMoney(n: number) {
-  return new Intl.NumberFormat(undefined, { style: "currency", currency: "USD" }).format(n);
-}
 
 export default async function InsightsPage() {
   const [count, agg, byCategory] = await Promise.all([
@@ -20,12 +17,7 @@ export default async function InsightsPage() {
   const sum = agg._sum.amount ?? 0;
   const avg = agg._avg.amount ?? 0;
 
-  const topCategories = byCategory
-    .map((row) => ({
-      label: row.category?.trim() || "Uncategorized",
-      total: row._sum.amount ?? 0,
-    }))
-    .filter((row) => row.total > 0);
+  const topCategories = buildTopCategories(byCategory);
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">

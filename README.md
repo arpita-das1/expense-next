@@ -27,6 +27,7 @@ A lightweight Next.js expense tracker application with receipt upload, AWS Textr
 - `@aws-sdk/client-textract`
 - `typescript`
 - `tailwindcss`
+- `jest` for unit testing
 
 ## Project structure
 
@@ -35,6 +36,8 @@ A lightweight Next.js expense tracker application with receipt upload, AWS Textr
   - `dashboard/page.tsx` — expense dashboard view
   - `insights/page.tsx` — aggregated expense insights
   - `upload-receipt/page.tsx` — receipt upload and auto-fill form
+  - `api/expenses/route.ts` — expense list and creation API route
+  - `api/expenses/[id]/route.ts` — expense deletion API route
   - `api/upload-receipt/route.ts` — receipt scan API route
   - `actions/expenses.ts` — server actions for expense creation and receipt upload
 - `components/`
@@ -86,6 +89,16 @@ This app uses SQLite for local development. Prisma generates the client automati
 - Uploaded receipts are stored in `public/receipts` and served as static files.
 - The receipt scan route uses AWS Textract and requires valid AWS credentials.
 - There is no authentication built into this sample project.
+
+## Testing
+
+This project includes Jest tests for API routes, receipt extraction helpers, and insights calculations.
+
+Run the suite with:
+
+```bash
+npm test
+```
 
 ## Deployment
 
