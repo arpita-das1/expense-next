@@ -13,10 +13,10 @@ A lightweight Next.js expense tracker application with receipt upload, AWS Textr
 
 - Next.js App Router project structure
 - Server Actions for form submission
-- Prisma ORM with SQLite database
+- Prisma ORM with PostgreSQL database and Neon Serverless platform
 - AWS Textract integration for receipt scanning
 - File upload validation and receipt storage
-- Static public file hosting for uploaded receipts
+- S3 bucket storage for uploaded receipts
 
 ## Technologies used
 
@@ -57,10 +57,11 @@ A lightweight Next.js expense tracker application with receipt upload, AWS Textr
 Create a `.env` file with the following values for local development:
 
 ```env
-DATABASE_URL="file:./dev.db"
-AWS_REGION=us-east-1
+DATABASE_URL="postgresql://user:pwd@ep-1234.eu-west-2.aws.neon.tech/neondb?sslmode=require"
+AWS_REGION=your AWS region
 AWS_ACCESS_KEY_ID=your-access-key-id
 AWS_SECRET_ACCESS_KEY=your-secret-access-key
+RECEIPTS_BUCKET=bucket-name
 # AWS_SESSION_TOKEN=optional
 ```
 
@@ -72,14 +73,16 @@ Install dependencies and start the dev server:
 
 ```bash
 npm install
-npm run dev
+npx next build
+npm next dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
 ## Database
 
-This app uses SQLite for local development. Prisma generates the client automatically during install.
+This app uses PostgreSQL for local development and Neon Serverless platform for Vercel deployment. 
+Prisma generates the client automatically during install.
 
 - Run `npx prisma migrate dev --name init` to create or update the database schema.
 - Run `npx prisma studio` to inspect stored expense records.
