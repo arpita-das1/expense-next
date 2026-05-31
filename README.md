@@ -5,7 +5,7 @@ A lightweight Next.js expense tracker application with receipt upload, AWS Textr
 ## What this project does
 
 - Adds and stores expense records with title, amount, category, notes, and date.
-- Uploads receipt images and stores them in `public/receipts`.
+- Uploads receipt images and stores them in an S3 bucket.
 - Uses an API route to send receipt image data to AWS Textract for automatic merchant, amount, and date extraction.
 - Displays expense data on dashboard and insights pages.
 
@@ -50,7 +50,7 @@ A lightweight Next.js expense tracker application with receipt upload, AWS Textr
   - `textract-receipt.ts` — AWS Textract response mapping
   - `receipt-types.ts` — receipt extraction result types
 - `prisma/schema.prisma` — database schema configuration
-- `public/receipts/` — uploaded receipt storage directory
+- `S3 bucket` — uploaded receipt storage location
 
 ## Environment variables
 
@@ -86,7 +86,7 @@ This app uses SQLite for local development. Prisma generates the client automati
 
 ## Notes
 
-- Uploaded receipts are stored in `public/receipts` and served as static files.
+- Uploaded receipts are stored in S3 and served from the configured bucket.
 - The receipt scan route uses AWS Textract and requires valid AWS credentials.
 - There is no authentication built into this sample project.
 

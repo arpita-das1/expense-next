@@ -7,8 +7,7 @@ export default function UploadReceiptPage() {
         Upload receipt
       </h1>
       <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
-        Choose an image to scan with AWS Textract and auto-fill the form, then save. Files are stored under{" "}
-        <code className="rounded bg-neutral-100 px-1 dark:bg-neutral-900">public/receipts</code>.
+        Choose an image to scan with AWS Textract and auto-fill the form, then save. Uploaded receipts are stored in your configured S3 bucket.
       </p>
       <div className="mt-8">
         <UploadReceiptForm />

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { getReceiptSignedUrl } from "@/lib/s3";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,15 @@ export default async function DashboardPage() {
     orderBy: { occurredAt: "desc" },
     take: 100,
   });
+
+  const expensesWithSignedUrls = await Promise.all(
+    expenses.map(async (expense) => ({
+      ...expense,
+      receiptUrl: expense.receiptPath
+        ? await getReceiptSignedUrl(expense.receiptPath)
+        : null,
+    }))
+  );
 
   const total = expenses.reduce((sum, e) => sum + e.amount, 0);
 
@@ -58,7 +68,7 @@ export default async function DashboardPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
-              {expenses.map((e) => (
+              {expensesWithSignedUrls.map((e) => (
                 <tr key={e.id} className="hover:bg-neutral-50/80 dark:hover:bg-neutral-900/50">
                   <td className="whitespace-nowrap px-4 py-3 text-neutral-600 dark:text-neutral-400">
                     {formatDate(e.occurredAt)}
@@ -69,9 +79,9 @@ export default async function DashboardPage() {
                     {formatMoney(e.amount)}
                   </td>
                   <td className="px-4 py-3">
-                    {e.receiptPath ? (
+                    {e.receiptUrl ? (
                       <a
-                        href={e.receiptPath}
+                        href={e.receiptUrl}
                         className="text-sm font-medium text-neutral-900 underline dark:text-neutral-100"
                         target="_blank"
                         rel="noreferrer"

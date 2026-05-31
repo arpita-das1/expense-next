@@ -1,9 +1,9 @@
 "use server";
 
-import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
+import { uploadReceiptToS3, getReceiptKey, getReceiptSignedUrl } from "@/lib/s3";
 import { prisma } from "@/lib/prisma";
 
 export type FormMessage = { ok: boolean; error?: string; receiptPath?: string };
@@ -56,20 +56,20 @@ export async function uploadReceiptWithExpense(
   const ext = path.extname(file.name) || ".bin";
   const safeExt = ext.length <= 8 ? ext : ".bin";
   const filename = `${randomUUID()}${safeExt}`;
-  const receiptsDir = path.join(process.cwd(), "public", "receipts");
-  await mkdir(receiptsDir, { recursive: true });
+  const objectKey = getReceiptKey(filename);
   const buffer = Buffer.from(await file.arrayBuffer());
-  await writeFile(path.join(receiptsDir, filename), buffer);
+
+  await uploadReceiptToS3(objectKey, buffer, file.type || "application/octet-stream");
 
   const occurredAtRaw = String(formData.get("occurredAt") ?? "").trim();
   const occurredAt = occurredAtRaw ? new Date(occurredAtRaw) : undefined;
 
-  const receiptPath = `/receipts/${filename}`;
+  const signedUrl = await getReceiptSignedUrl(objectKey);
   await prisma.expense.create({
     data: {
       title,
       amount,
-      receiptPath,
+      receiptPath: objectKey,
       category: String(formData.get("category") ?? "").trim() || null,
       notes: String(formData.get("notes") ?? "").trim() || null,
       ...(occurredAt && !Number.isNaN(occurredAt.getTime()) ? { occurredAt } : {}),
@@ -78,5 +78,5 @@ export async function uploadReceiptWithExpense(
 
   revalidatePath("/dashboard");
   revalidatePath("/insights");
-  return { ok: true, receiptPath };
+  return { ok: true, receiptPath: signedUrl };
 }
